@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Oct 31 16:53:58 2020
+
+@author: mainulhossain
+"""
+#importing libraries
+import numpy as np
+
+file = open ('/Users/mainulhossain/Desktop/422 lab 1/Level 2.txt', 'r');
+
+#taking in first two lines as inputs for my vertex and edge count
+line_1 = file.readline().strip(); 
+vertex_count = int(line_1[0]) ;
+line_2 = file.readline().strip();
+edge_count = int(line_2) ;
+
+#creating adj. matrix
+adj_matrix = np.zeros((vertex_count, vertex_count), dtype= 'int')
+'print(adj_matrix);'
+
+#populating matrix
+
+e= edge_count
+line= file.readline().strip()
+
+while (e>1): #as final numbers are input of locations
+    vertices = line.split(' ')
+    u = int(vertices[0])
+    v = int(vertices[1])
+    adj_matrix[u][v] += 1
+    adj_matrix[v][u] += 1 #for bidirectional graphs
+    e=e-1 #taking e as an edge counter so as to take the final number in the file as my input
+    line= file.readline().strip()
+    
+    
+list=[] #as there are multiple positions to be taken into account
+while True:
+    line = file.readline().strip();
+    
+    if not line:
+        break    
+    
+    y= line.split(' ')
+    list.append(y[0]) #adding the locations of each participants to the list.
+
+lina= int(list[0])  
+nora= int(list[1])
+lara= int(list[2])
+  
+
+#importing from queue
+from queue import Queue
+#initialising queue
+my_queue = Queue(maxsize = vertex_count)
+    
+#bfs_function
+def bfs(s,r): #passing on all recieved parameters to all values of queue
+    #initializing parent and colour parameters for matrices 
+    color = np.empty((vertex_count), dtype='object')
+    color[:] = 'WHITE'
+    parent= np.empty((vertex_count), dtype='object')
+    parent[:]=np.NaN
+    d=np.zeros((vertex_count), dtype='int')
+    
+    dist=0
+    color[s]= 'Gray'
+    parent[s]= np.nan
+    d[s]= 0
+    my_queue.put(s) #inouting list values inside queue
+    while not my_queue.empty():
+        u = my_queue.get() #popping element
+        
+        for v in range (0, vertex_count-1): #as the graph starts from 0
+            if adj_matrix[u][v] == 1:
+                if color[v] == 'WHITE':
+                    color[v] = 'GRAY'
+                    d[v] = d[u] + 1
+                    parent[v] = u
+                    my_queue.put(v) 
+                    
+        color[u] = 'BLACK'
+        if (u==r):
+            dist = d[u];
+                
+    return dist #returning the distannce of the chosen node from lina's location
+
+#running BFS for both instances and storing the returned value respectively
+nora = bfs(nora,lina)
+lara = bfs(lara,lina)
+
+if nora<lara:
+    print(" Nora wins")
+else:
+    print("lara wins")
