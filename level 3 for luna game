@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Nov  7 11:48:46 2020
+
+@author: mainulhossain
+"""
+
+#importing libraries
+import numpy as np
+
+file = open ('/Users/mainulhossain/Desktop/422 lab 1/Level 3.txt', 'r');
+
+#taking in first two lines as inputs for my vertex and edge count
+line_1 = file.readline().strip(); 
+vertex_count = int(line_1) ;
+line_2 = file.readline().strip();
+edge_count = int(line_2) ;
+
+#creating adj. matrix
+adj_matrix = np.zeros((vertex_count, vertex_count), dtype= 'int')
+'print(adj_matrix);'
+
+#populating matrix
+
+e= edge_count
+line= file.readline().strip()
+
+while (e>=1): #as final numbers are input of locations
+    vertices = line.split(' ')
+    u = int(vertices[0])
+    v = int(vertices[1])
+    adj_matrix[u][v] += 1
+    e=e-1 #taking e as an edge counter so as to take the final number in the file as my input
+    line= file.readline().strip()
+
+listed=int(line)
+line= file.readline().strip()
+ip=int(line)
+list=[]
+
+for i in range(ip):
+    line=file.readline().strip()
+    y=line.split(' ')
+    list.append(int(y[0]))
+#print(k)     
+#initializing parent and colour parameters for matrices    
+
+color = np.empty((vertex_count), dtype='object')
+color[:] = 'WHITE'
+parent= np.empty((vertex_count), dtype='object')
+parent[:]=np.NaN
+d=np.zeros((vertex_count), dtype='int')
+
+
+
+#importing from queue
+from queue import Queue
+#initialising queue
+my_queue = Queue(maxsize = vertex_count)
+    
+#bfs_function
+def bfs(s): #passing on all recieved parameters to all values of queue
+    dest=0
+    color[s]= 'GRAY'
+    parent[s]= np.nan
+    d[s]= 0
+    my_queue.put(s) #inouting list values inside queue
+    while not my_queue.empty():
+        u = my_queue.get() #popping element
+        
+        for v in range (0, vertex_count-1): #as the graph starts from 0
+            if adj_matrix[v][u] == 1:
+                if color[v] == 'WHITE':
+                    color[v] = 'GRAY'
+                    d[v] = d[u] + 1
+                    parent[v] = u
+                    my_queue.put(v) 
+                        
+        color[u] = 'BLACK'
+        if u in list:
+            dest=d[u]
+            break
+            
+                
+    return dest #returns distance from lina's location to the closest node
+
+print(bfs(listed))
