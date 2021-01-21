@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Nov 27 13:52:06 2020
+
+@author: mainulhossain
+"""
+
+import numpy as np
+import random
+MAX= float('inf')
+MIN= float('-inf')
+
+def minimax(depth, childIndex, maximizingPlayer, values, visit, alpha, beta):
+    if depth == 0:
+        visit[childIndex] = 1
+        return values[childIndex]
+    
+    if maximizingPlayer:
+        maxEval = MIN; # as bestmax
+        
+        for i in range(0,branching-1):
+            Eval = minimax(depth-1, childIndex*branching+i, False, values, visit, alpha, beta) #for val
+            maxEval = max(maxEval, Eval)
+            alpha = max(alpha, maxEval)
+            if beta <= alpha:
+                break
+            
+        return maxEval
+    
+    else:
+        minEval= MAX; # as bestmin
+        
+        for i in range(0,branching-1):
+            Eval = minimax(depth-1, childIndex*branching+i, False, values, visit, alpha, beta)
+            minEval = min(minEval, Eval)
+            beta = min (beta, Eval)
+            if beta<= alpha:
+                break
+            
+        return minEval
+    
+#inputs
+#file = open("input.txt", 'r')  # Open the file for reading.
+#data = file.read()  # Read the contents of the file.
+#file.close()  # Close the file since we're done using it.
+#sentences = data.splitlines()  # Making array of each sentences.
+        
+#turns = int(sentences[0])
+turns =int (input("Number of turns for each player: "))
+depth=2*turns
+
+#branching= int(sentences[1])
+branching= int(input("Number of notes: "))    
+  
+#minval= int(sentences[2].split()[0])
+minval= int(input("Enter Minimum Value of Notes: "))  
+
+#maxval= int(sentences[2].split()[1])
+maxval= int(input("Enter Maximum Value of Notes: "))
+
+leafnodes=branching**depth
+values= []
+for i in range(0, leafnodes):
+    n= random.randint(minval, maxval)
+    values.append(n)
+visit= np.zeros((len(values)), dtype= 'int') 
+print("Depth:", depth)
+print("Branch:", branching)
+print("Terminal States (leaf nodes):", leafnodes)
+print("Comparison before Alpha Beta Pruning:", np.count_nonzero(values))
+print("Max amount collected by Riyad:", minimax(depth, 0, False, values, visit, minval, maxval))
+print("Comparison after Alpha Beta Pruning:", np.count_nonzero(visit)) 
+    
